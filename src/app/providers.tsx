@@ -4,7 +4,7 @@ import { PrivyProvider } from "@privy-io/react-auth";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   // Use a default sandbox app ID if environment variable is not defined
-  const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID || "cl7y3h7sc000109l55c3c0o6k";
+  const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
 
   return (
     <PrivyProvider
