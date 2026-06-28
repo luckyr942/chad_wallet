@@ -7,6 +7,7 @@ import { Search, Wallet, ArrowLeft, Loader2, Check } from "lucide-react";
 import { usePrivy } from "@privy-io/react-auth";
 import { TRENDING_TOKENS, TokenDetails } from "@/services/mockData";
 import { searchSolanaTokens, getSolanaTokenDetails, SearchedToken } from "@/services/dexscreener";
+import { getBirdEyeTokenDetails } from "@/services/birdeye";
 import TradingLeftPanel from "@/components/TradingLeftPanel";
 import TradingMiddlePanel from "@/components/TradingMiddlePanel";
 import TradingRightPanel, { Position } from "@/components/TradingRightPanel";
@@ -36,6 +37,17 @@ function TradeTerminalCore() {
       currentPrice: 184.2,
     },
   ]);
+
+  // Unified data fetcher trying BirdEye first, falling back to DEXScreener
+  const fetchUnifiedTokenDetails = async (address: string) => {
+    try {
+      const birdeyeDetails = await getBirdEyeTokenDetails(address);
+      if (birdeyeDetails) return birdeyeDetails;
+    } catch (e) {
+      console.warn("BirdEye fetch failed, falling back to DEXScreener:", e);
+    }
+    return await getSolanaTokenDetails(address);
+  };
 
   // Read query parameter e.g., ?token=BONK
   useEffect(() => {
@@ -72,7 +84,7 @@ function TradeTerminalCore() {
     if (!selectedToken?.address) return;
     
     const interval = setInterval(async () => {
-      const freshDetails = await getSolanaTokenDetails(selectedToken.address);
+      const freshDetails = await fetchUnifiedTokenDetails(selectedToken.address);
       if (freshDetails) {
         setSelectedToken((prev) => ({
           ...prev,
@@ -111,7 +123,7 @@ function TradeTerminalCore() {
     } else {
       // If it's a SearchedToken, load full statistics first
       setSearchLoading(true);
-      const fullDetails = await getSolanaTokenDetails(token.address);
+      const fullDetails = await fetchUnifiedTokenDetails(token.address);
       setSearchLoading(false);
       
       if (fullDetails) {
