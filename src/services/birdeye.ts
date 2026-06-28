@@ -93,7 +93,10 @@ export async function getBirdEyeTokenDetails(address: string): Promise<TokenDeta
       description: `${ov.name} ($${ov.symbol}) is trading at $${price.toFixed(6)} on Solana.`,
       pairAddress: "",
       performance: {
-        "24h": ov.priceChange24hPercent || 0,
+        "5m": 0,
+        "1h": 0,
+        "4h": 0,
+        "1d": ov.priceChange24hPercent || 0,
       },
       buysCount: ov.buy24h || 100,
       sellsCount: ov.sell24h || 80,
