@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Search, Wallet, ArrowLeft, Loader2, Check } from "lucide-react";
 import { usePrivy } from "@privy-io/react-auth";
@@ -11,7 +11,7 @@ import TradingLeftPanel from "@/components/TradingLeftPanel";
 import TradingMiddlePanel from "@/components/TradingMiddlePanel";
 import TradingRightPanel, { Position } from "@/components/TradingRightPanel";
 
-export default function TradePage() {
+function TradeTerminalCore() {
   const searchParams = useSearchParams();
   const { login, logout, authenticated, user } = usePrivy();
   
@@ -441,5 +441,22 @@ export default function TradePage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function TradePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-screen w-screen bg-[#030305] flex flex-col items-center justify-center gap-3 text-gray-400 font-sans">
+          <Loader2 className="w-6 h-6 animate-spin text-primary-light" />
+          <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            Loading Trading Board...
+          </span>
+        </div>
+      }
+    >
+      <TradeTerminalCore />
+    </Suspense>
   );
 }
