@@ -30,9 +30,11 @@ export interface BirdEyeOverviewResponse {
     decimals: number;
     price: number;
     priceChange24hPercent: number;
-    v24hUSD: number;
-    mc: number;
-    liquidity: number;
+    v24hUSD?: number;
+    v24h?: number;
+    marketCap?: number;
+    fdv?: number;
+    liquidity?: number;
     logoURI?: string;
     holder?: number;
     trade24h?: number;
@@ -84,9 +86,9 @@ export async function getBirdEyeTokenDetails(address: string): Promise<TokenDeta
       logoURI: ov.logoURI || "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png",
       price: price,
       change24h: ov.priceChange24hPercent || 0,
-      volume24h: formatLargeNumber(ov.v24hUSD),
-      marketCap: formatLargeNumber(ov.mc),
-      liquidity: formatLargeNumber(ov.liquidity),
+      volume24h: formatLargeNumber(ov.v24hUSD || ov.v24h || 0),
+      marketCap: formatLargeNumber(ov.marketCap || ov.fdv || 0),
+      liquidity: formatLargeNumber(ov.liquidity || 0),
       holdersCount: formatLargeNumber(ov.holder || 0),
       description: `${ov.name} ($${ov.symbol}) is trading at $${price.toFixed(6)} on Solana.`,
       pairAddress: "",
